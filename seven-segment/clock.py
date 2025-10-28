@@ -12,8 +12,39 @@ from .display import *
 
 
 class Clock(Thread):
+    
+    """A clock object.
+
+    In this example, we are documenting attributes in an attributes section
+    at the beginning of the class.  Attributes are defined in the __init__
+    method but documented here.
+
+
+    Attributes:
+        blink_on (bool): flag to determine if blinking.
+        led_on (bool): flag to determine if led is on.
+        got_interrupted (bool): flag to determine if clock was interrupted.
+        blink_on (bool): flag to determine if blinking.
+        alarm_is_off (bool) = flag to determine if alarm is off
+        alarm_locked (bool) = flag to determine if alarm is locked         
+        now (str): current time, four digits, blank if first digit not one.
+        alarm_time (str): current time, four digits, blank if first digit not one.
+        music_file (str): file name for the mp3 to play when alarm sounds
+        
+    """
     # Initialize all variables
     def __init__(self):
+        """Example of docstring on the __init__ method.
+
+        No need to document here if defined at class level.  
+
+        Note:
+            Do not include the `self` parameter in the ``Args`` section.
+
+        Args:
+            There are no args to document in this example.
+
+        """
         super().__init__()
         self.blink_on = True
         self.led_on = True
@@ -21,11 +52,19 @@ class Clock(Thread):
         self.alarm_is_off = True
         self.alarm_locked = False
         self.now = ""
-        self.alarm = ""
+        self.alarm = ""       
         self.music_file = None
 
     # Overload Thread.run
     def run(self):
+        """Runs the clock.
+
+        This method iterates through the main display functions after
+        getting the time and updating the now attribute of the class.  It also
+        instatiates methods that are timed and thus continously updated. This is
+        how get_time and monitor_button work.
+        
+        """
         self.blink_colon()     # Start blink_colon periodic event
         self.get_time()        # Start time capture periodic event
         self.monitor_button()  # Monitor the push button
@@ -33,8 +72,18 @@ class Clock(Thread):
             clock_displays(self.now)   # Continuously display current time
         clear_displays()       # Turn off all LEDs
 
-    # Event function to toggle the colon LED, blink period of 1 second
+    
     def blink_colon(self):
+        """Event method to toggle the colon LED, blink period of 1 second
+
+        This method uses a timer to change the state of the colon LED at
+        a regular interval.
+        
+        Todo:
+            * Could add an argument to blink at user-specified rate, but for now,
+            it blinks at a hard-coded rate.
+        
+        """
         if not self.got_interrupted:
             self.blink_on = not self.blink_on
             set_colon(self.blink_on)
@@ -60,8 +109,15 @@ class Clock(Thread):
     def set_alarm(self, alarm):
         self.alarm = alarm
 
-    # Event function to monitor the push button state, every 500ms
     def monitor_button(self):
+        """Event function to monitor the push button state, every 500ms.
+
+        Method calls itself at 500 ms intervals and checks the state
+        of the button. This can be thought of as a property that can
+        be checked at any time to get the state of the button.  Like other
+        event methods, it is stopped if there is an interrupt.
+        
+        """
         if not self.got_interrupted:
             if get_button_pressed():
                 print("button pressed")

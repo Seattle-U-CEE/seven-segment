@@ -33,6 +33,20 @@ def init_display(channels_set):
 
 
 def activate_displays(digits, decimal_point=None, set_colon=False, set_thousand=False):
+    """Function for activating the clock.
+
+    The clock display takes a set of characters (the digits) provided as
+    a string and displays these on the seven-segment display.  It briefly illuminates
+    each character.
+
+    Args:
+        digits (str): A four-character string that will displayed.
+        decimal_point (:obj:'list' of 'str', optional): Defines where decimal displays,
+            should be list of four elements of either 1 or 0.
+        set_colon (bool, optional): flag to determine if colon is lighted
+        set_thousands (bool, optional): flag to determine if thousands is lighted
+
+    """
     if decimal_point is None:
         decimal_point = [False] * 4
     for d in range(4):
@@ -57,6 +71,15 @@ def activate_displays(digits, decimal_point=None, set_colon=False, set_thousand=
 
 
 def clock_displays(digits):
+    """Function for displaying characters on the clock.
+
+    The clock display takes a set of characters provided as a string and
+    displays these on the seven-segment display.  It briefly illuminates
+    each character.
+
+    Args:
+        digits (str): A four-character string that will displayed.
+    """
 
     for d in range(4):
         # Set the display pins
