@@ -20,32 +20,22 @@ class Clock(Thread):
     at the beginning of the class.  Attributes are defined in the __init__
     method but documented here.
 
-
     Attributes:
-        blink_on (bool): flag to determine if blinking.
-        led_on (bool): flag to determine if led is on.
-        got_interrupted (bool): flag to determine if clock was interrupted.
-        blink_on (bool): flag to determine if blinking.
+        blink_on (bool): state of the blinking colon.
+        led_on (bool): state of the blinking LED.
+        got_interrupted (bool): flag to determine if clock
+            was interrupted.
         alarm_is_off (bool) = flag to determine if alarm is off
         alarm_locked (bool) = flag to determine if alarm is locked         
-        now (str): current time, four digits, blank if first digit not one.
-        alarm_time (str): current time, four digits, blank if first digit not one.
+        now (str): current time, four digits, blank if first
+            digit not one.
+        alarm_time (str): current time, four digits, blank if
+            first digit not one.
         music_file (str): file name for the mp3 to play when alarm sounds
         
     """
     # Initialize all variables
     def __init__(self):
-        """Example of docstring on the __init__ method.
-
-        No need to document here if defined at class level.  
-
-        Note:
-            Do not include the `self` parameter in the ``Args`` section.
-
-        Args:
-            There are no args to document in this example.
-
-        """
         super().__init__()
         self.blink_on = True
         self.led_on = True
@@ -88,7 +78,7 @@ class Clock(Thread):
         if not self.got_interrupted:
             self.blink_on = not self.blink_on
             set_colon(self.blink_on)
-            Timer(0.5, self.blink_colon).start()
+            Timer(0.1, self.blink_colon).start()
 
     # Event function to capture current time and check alarm status, every 500ms
     def get_time(self):
@@ -111,7 +101,7 @@ class Clock(Thread):
         self.alarm = alarm
 
     def monitor_button(self):
-        """Event function to monitor the push button state, every 500ms.
+        """Event method to monitor the push button state, every 500ms.
 
         Method calls itself at 500 ms intervals and checks the state
         of the button. This can be thought of as a property that can
