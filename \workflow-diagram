@@ -1,0 +1,7 @@
+```mermaid
+graph TD;
+    A[Start] --> B{Is code pushed?};
+    B -- Yes --> C[Trigger GitHub Action];
+    B -- No --> D[Stay Idle];
+    C --> E[Run Tests];
+    E --> F[Deploy App];
