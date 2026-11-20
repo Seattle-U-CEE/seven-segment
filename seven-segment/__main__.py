@@ -11,6 +11,8 @@ from argparse import ArgumentParser
 
 from .display import *
 from .clock import Clock
+from .timer import parse_timer, run_timer
+from .stopwatch import run_stopwatch
 
 
 def main():
@@ -40,6 +42,11 @@ def main():
                             help="Timer start, MM:SS format")
 
         args = parser.parse_args()
+
+        # Check the timer start before touching the GPIO pins
+        timer_seconds = None
+        if args.mode == 'timer':
+            timer_seconds = parse_timer(args.timerstart)
 
         # Setup and Initialize the GPIO pins
         init_display(channels_set)
@@ -72,12 +79,12 @@ def main():
                 sleep(1.0)
 
         elif args.mode == 'stopwatch':
-            # ADD YOUR CODE HERE (then remove 'pass')
-            pass
+            print("Running 'stopwatch' mode ...")
+            run_stopwatch()
 
         elif args.mode == 'timer':
-            # ADD YOUR CODE HERE (then remove 'pass')
-            pass
+            print(f"Running 'timer' mode, counting down from {args.timerstart} ...")
+            run_timer(timer_seconds)
 
         else:   # args.mode == 'freeform'
 
