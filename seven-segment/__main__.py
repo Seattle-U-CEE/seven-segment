@@ -11,10 +11,43 @@ from argparse import ArgumentParser
 
 from .display import *
 from .clock import Clock
+from .timer import CountdownTimer, parse_timer
+from .stopwatch import Stopwatch
+
+CLOCK_PATTERN = compile(r"([12]?)(\d):([0-5])(\d)")
+
+
+def validate_arguments(args):
+    """Check the arguments of the chosen mode before touching the GPIO pins.
+
+    Raises ValueError if they are invalid. Returns the timer length in seconds
+    for 'timer' mode, otherwise None.
+    """
+    if args.mode == 'timer':
+        return parse_timer(args.timerstart)
+
+    # The other modes do not use -t
+    if args.timerstart is not None:
+        print(f"WARNING: --timerstart is ignored in '{args.mode}' mode")
+
+    if args.mode == 'clock':
+        if args.alarm is not None and CLOCK_PATTERN.match(args.alarm) is None:
+            raise ValueError(f"ERROR: Invalid alarm argument '{args.alarm}'. Must be 'H:MM'")
+        if args.music is not None and not path.isfile(args.music):
+            raise ValueError(f"ERROR: Cannot find '{args.music}' file")
+    return None
+
+
+def run_until_done(worker):
+    """Start a Thread and wait for it to finish (Ctrl+c still works)"""
+    worker.start()
+    while worker.is_alive():
+        worker.join(0.2)
 
 
 def main():
     clock = None
+    worker = None
     channels_set = False
     clock_pattern = compile(r"([12]?)(\d):([0-5])(\d)")
 
@@ -40,6 +73,9 @@ def main():
                             help="Timer start, MM:SS format")
 
         args = parser.parse_args()
+
+        # Validate the arguments of the chosen mode before touching the GPIO pins
+        timer_seconds = validate_arguments(args)
 
         # Setup and Initialize the GPIO pins
         init_display(channels_set)
@@ -72,12 +108,14 @@ def main():
                 sleep(1.0)
 
         elif args.mode == 'stopwatch':
-            # ADD YOUR CODE HERE (then remove 'pass')
-            pass
+            print("Running 'stopwatch' mode ...")
+            worker = Stopwatch()
+            run_until_done(worker)      # Stay in 'stopwatch' mode until Ctrl+c
 
         elif args.mode == 'timer':
-            # ADD YOUR CODE HERE (then remove 'pass')
-            pass
+            print(f"Running 'timer' mode, counting down from {args.timerstart} ...")
+            worker = CountdownTimer(timer_seconds)
+            run_until_done(worker)      # Returns when the button is pressed at 00:00
 
         else:   # args.mode == 'freeform'
 
@@ -150,6 +188,9 @@ def main():
     except KeyboardInterrupt:
         if clock is not None:
             clock.stop()
+        if worker is not None:
+            worker.stop()
+            worker.join(1.0)    # let it stop driving the pins before cleanup()
         print("\b\b  \nCtrl+c pressed, exiting")
     except ValueError as e:
         print(e)

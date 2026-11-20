@@ -31,3 +31,30 @@ or to get the usage help information:
 ```
 python -m seven-segment -h
 ```
+
+### Timer mode
+
+Counts down from a start time and shows the minutes and seconds, with the colon blinking. When it reaches '00:00', the LED blinks until the button is pressed.
+
+'''
+python -m seven-segment timer -t 01:30
+python -m seven-segment timer --timestart 00:10
+
+### Timer mode
+
+The start time must be 'MM:SS' (minutes 0-99, seconds 00-59) and greater than '00:00'.
+
+### Stopwatch mode
+'''
+python -m seven-segment stopwatch
+'''
+
+Each press-and-release of the button moves to the next state:
+
+1. Start '000.0' seconds
+2. After a press counts up, 100ms precision, blinking
+3. After another press freezes on elapsed time continuously
+4. After another press, reset to  '000.0' same as state 1
+
+Press Crt+C to quit any mode.
+
