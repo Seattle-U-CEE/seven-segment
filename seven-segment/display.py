@@ -28,7 +28,7 @@ def init_display(channels_set):
     for pin in OUT_PINS:
         outputs[pin] = GPIO.LED(pin)
     for pin in IN_PINS:
-        inputs[pin] = GPIO.Button(pin)
+        inputs[pin] = GPIO.Button(pin, bounce_time=0.08)
     clear_displays()
 
 
@@ -56,20 +56,24 @@ def activate_displays(digits, decimal_point=None, set_colon=False, set_thousand=
         sleep(0.005)
 
 
-def clock_displays(digits):
+def clock_displays(digits, dp):
 
-    for d in range(4):
+        for d in range(4):
         # Set the display pins
-        output(DISP_OUT_L[d - 1], HIGH)
-        output(DISP_OUT_L[d - 2], HIGH)
-        output(DISP_OUT_L[d - 3], HIGH)
-        output(DISP_OUT_L[d], LOW)
+            output(DISP_OUT_L[d - 1], HIGH)
+            output(DISP_OUT_L[d - 2], HIGH)
+            output(DISP_OUT_L[d - 3], HIGH)
+            output(DISP_OUT_L[d], LOW)
 
         # Set the 7-segment
-        for seg_index in range(7):
-            output(SEGMENT_OUT_H[seg_index], SEGS_FOR_CHAR[digits[d]][seg_index])
+            for seg_index in range(7):
+                output(SEGMENT_OUT_H[seg_index], SEGS_FOR_CHAR[digits[d]][seg_index])
+            if d == 2 and dp:
+                output(DP_OUT_H, True)
+            else:
+                output(DP_OUT_H, False)
 
-        sleep(0.005)
+            sleep(0.005)
 
 
 def clear_displays():
@@ -90,6 +94,7 @@ def set_led(state):
 def get_button_pressed():
     global inputs
     return inputs[BUTTON_IN].is_pressed
+
 
 
 def cleanup():

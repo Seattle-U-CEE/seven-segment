@@ -11,6 +11,8 @@ from argparse import ArgumentParser
 
 from .display import *
 from .clock import Clock
+from .timer import ClockTimer
+from .stopwatch import Stopwatch
 
 
 def main():
@@ -72,12 +74,33 @@ def main():
                 sleep(1.0)
 
         elif args.mode == 'stopwatch':
+            
             # ADD YOUR CODE HERE (then remove 'pass')
-            pass
+            print("Running 'stopwatch' mode ...")
+            clock = Stopwatch()
+            clock.start()
+            while True:
+                sleep(1.0)
 
         elif args.mode == 'timer':
             # ADD YOUR CODE HERE (then remove 'pass')
-            pass
+
+            timerstart = None
+            if args.timerstart is not None:
+                m = clock_pattern.match(args.timerstart)
+                if m is None:
+                    print(f"ERROR: Invalid alarm argument '{args.alarm}'. Must be 'M:SS'")
+                else:
+                    print(f"Timer set to {args.timerstart}")
+                    timerstart = args.timerstart.replace(":", "")
+                    if m.group(1) == '':
+                        timerstart = " " + timerstart
+            print("Running 'timer' mode ...")
+            clock = ClockTimer()
+            clock.set_timer(timerstart)
+            clock.start()
+            while True:
+                sleep(1.0)
 
         else:   # args.mode == 'freeform'
 

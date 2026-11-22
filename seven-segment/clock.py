@@ -30,7 +30,7 @@ class Clock(Thread):
         self.get_time()        # Start time capture periodic event
         self.monitor_button()  # Monitor the push button
         while not self.got_interrupted:
-            clock_displays(self.now)   # Continuously display current time
+            clock_displays(self.now, False)   # Continuously display current time
         clear_displays()       # Turn off all LEDs
 
     # Event function to toggle the colon LED, blink period of 1 second
